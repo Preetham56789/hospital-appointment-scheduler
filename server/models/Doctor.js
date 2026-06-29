@@ -3,25 +3,29 @@ const mongoose = require("mongoose");
 const doctorSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true
+    required: true,
   },
+
   department: {
     type: String,
-    required: true
+    required: true,
   },
+
   experience: {
     type: Number,
-    required: true
+    required: true,
   },
+
+  isApproved: {
+    type: Boolean,
+    default: true,
+  },
+
   availableSlots: [
     {
-      type: String
-    }
+      type: String,
+    },
   ],
-  isApproved: {
-  type: Boolean,
-  default: false
-}
-}, { timestamps: true });
+});
 
 module.exports = mongoose.model("Doctor", doctorSchema);

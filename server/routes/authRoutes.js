@@ -8,7 +8,7 @@ const authMiddleware = require("../middleware/authMiddleware");
 // Register API
 router.post("/register", async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, role } = req.body;
 
     // Check if user exists
     let user = await User.findOne({ email });
@@ -95,17 +95,27 @@ router.get("/users", adminMiddleware, async (req, res) => {
 });
 
 // Update profile
-router.put("/update/:id", async (req, res) => {
+
+router.put("/update", authMiddleware, async (req, res) => {
   try {
-    const user = await User.findByIdAndUpdate(
-      req.params.id,
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user._id,   // ✅ FIXED
       req.body,
       { new: true }
     );
 
-    res.status(200).json(user);
+    res.json(updatedUser);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ message: "Update failed" });
+  }
+});
+
+router.get("/me", authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("-password");
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching profile" });
   }
 });
 
